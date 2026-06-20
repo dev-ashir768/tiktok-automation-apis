@@ -7,7 +7,7 @@ function req(name: string): string {
 }
 
 export const env = {
-  port: Number(process.env.PORT ?? 4000),
+  port: Number(process.env.PORT ?? 5003),
   databaseUrl: req("DATABASE_URL"),
   adminEmail: req("ADMIN_EMAIL"),
   adminPassword: req("ADMIN_PASSWORD"),

@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  apiKey    String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages  SentMessage[]
+}
+
+model SentMessage {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  creatorHandle String   // normalized lowercase handle, e.g. "hannahbentley"
+  creatorName   String?  // display name if known
+  messageBody   String   @db.Text
+  status        String   @default("sent") // "sent" | "failed"
+  errorMessage  String?  @db.Text
+
+  sentAt        DateTime @default(now())
+
+  @@index([creatorHandle])      // for global dedup queries
+  @@index([userId, sentAt])
+}
